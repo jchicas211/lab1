@@ -31,6 +31,8 @@ public:
         float vel;
         float pos[2];
 
+	bool change;
+
 	int xres, yres;
 	Global(){
 	    xres = 400;
@@ -173,6 +175,16 @@ void X11_wrapper::check_resize(XEvent *e)
 	if (xce.width != g.xres || xce.height != g.yres) {
 		//Window size did change.
 		reshape_window(xce.width, xce.height);
+		if (xce.width >= 600)
+		{
+			g.change = true;
+
+		}
+		else
+		{
+			g.change = false;
+
+		}
 	}
 }
 //-----------------------------------------------------------------------------
@@ -255,15 +267,19 @@ void init_opengl(void)
 
 void physics()
 {
-	//No physics yet.
+	
 	  g.pos[0] += g.vel;
         if (g.pos[0] >= (g.xres-g.w)) {
                 g.pos[0] = (g.xres-g.w);
                 g.vel = -g.vel;
+		
+	
         }
         if (g.pos[0] <= g.w) {
                 g.pos[0] = g.w;
                 g.vel = -g.vel;
+	
+		
         }
 
 
@@ -275,7 +291,14 @@ void render()
 	glClear(GL_COLOR_BUFFER_BIT);
 	//draw the box
 	glPushMatrix();
+
+	if (g.change == true){
 	glColor3ub(100, 120, 220);
+	}
+
+	if (g.change == false){
+	glColor3ub(255, 0, 0);
+	}
 	glTranslatef(g.pos[0], g.pos[1], 0.0f);
 	glBegin(GL_QUADS);
 		glVertex2f(-g.w, -g.w);
